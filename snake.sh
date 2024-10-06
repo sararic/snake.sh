@@ -180,7 +180,7 @@ do
         output $((W/2 - 6)) $((H/2-1)) " GAME OVER!! "
         output $((W/2 - 6)) $((H/2)) " Score: $(( length - 3 )) "
         output $((W/2 - 6)) $((H/2+1)) " High-score: $highScore "
-        read -N 1 _;
+        read -N 1 _
         exit
     else
         frame
