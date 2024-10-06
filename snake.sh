@@ -135,8 +135,8 @@ frame(){
     if [ $growingFlag -ne 0 ] && [ $curTail -eq 0 ]; then
     # we only increment the length of the snake when the frame index hits
     # 0 to avoid issues with addressing array entries that don't exist.
-        ((length += growingFlag))
-        growingFlag=0
+        ((length++))
+        ((growingFlag--))
     else
         # erase the old tail
         output ${snakeX[curTail]} ${snakeY[curTail]} ' '
