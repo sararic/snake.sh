@@ -56,8 +56,8 @@ keystroke= # pressed key.
 ############ --- defining functions --- ############
 
 
-#output x y c: output character c at position x,y
 output(){
+    #output x y c: output character c at position x,y
     printf "\033[%d;%dH%s" "$(($2+1))" "$(($1+1))" "$3" 2>/dev/null
 }
 
@@ -74,7 +74,6 @@ place_food(){
     foodY=$((q / W))
     output $foodX $foodY $
 }
-place_food
 
 parse_input(){
     # parse keyboard input. Arrow keys take values in:
@@ -124,8 +123,8 @@ check_collision(){
     fi
 }
 
-# to be executed every frame
 frame(){
+    # to be executed every frame
     if [ ${snakeX[curHead]} -eq $foodX ]\
         && [ ${snakeY[curHead]} -eq $foodY ]
     then
@@ -136,8 +135,8 @@ frame(){
     if [ $growingFlag -ne 0 ] && [ $curTail -eq 0 ]; then
     # we only increment the length of the snake when the frame index hits
     # 0 to avoid issues with addressing array entries that don't exist.
-        ((length++))
-        ((growingFlag--))
+        ((length += growingFlag))
+        growingFlag=0
     else
         # erase the old tail
         output ${snakeX[curTail]} ${snakeY[curTail]} ' '
@@ -165,6 +164,7 @@ frame(){
 ############ --- main loop --- ############
 
 
+place_food
 while true
 do
     if [ $gameOverFlag -ne 0 ]; then
