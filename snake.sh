@@ -129,15 +129,15 @@ frame(){
     if [ ${snakeX[curHead]} -eq $foodX ]\
         && [ ${snakeY[curHead]} -eq $foodY ]
     then
-        growingFlag=1
+        ((growingFlag++))
         place_food
     fi
 
-    if [ $growingFlag -eq 1 ] && [ $curTail -eq 0 ]; then
+    if [ $growingFlag -ne 0 ] && [ $curTail -eq 0 ]; then
     # we only increment the length of the snake when the frame index hits
-    # 0 to avoid issues.
+    # 0 to avoid issues with addressing array entries that don't exist.
         ((length++))
-        growingFlag=0
+        ((growingFlag--))
     else
         # erase the old tail
         output ${snakeX[curTail]} ${snakeY[curTail]} ' '
@@ -167,7 +167,7 @@ frame(){
 
 while true
 do
-    if [ $gameOverFlag -eq 1 ]; then
+    if [ $gameOverFlag -ne 0 ]; then
         if [ $(( length - 3 )) -gt $highScore ]; then
             highScore=$(( length - 3 ))
             sed -i -e "s/^highScore=[0-9]\+/highScore=$highScore/" $0
