@@ -170,7 +170,7 @@ do
     if [ $gameOverFlag -ne 0 ]; then
         if [ $(( length - 3 )) -gt $highScore ]; then
             highScore=$(( length - 3 ))
-            sed -i -e "s/^highScore=[0-9]\+/highScore=$highScore/" $0
+            sed -i -e "s/^highScore=[0-9]\+/highScore=$highScore/" "$0"
         fi
         output $((W/2 - 6)) $((H/2-1)) " GAME OVER!! "
         output $((W/2 - 6)) $((H/2)) " Score: $(( length - 3 )) "
