@@ -5,6 +5,8 @@ Snake game written entirely in bash script.
 ## Dependencies
 
 - `bash`: version >= 4.4
+- `sed`: for self-editing the highscore
+- `stty`: for interfacing with the terminal
 
 ## Installation
 
