@@ -23,7 +23,7 @@ RANDOM=$(( $(date +%s) % 32768 ))
 ############ --- program variables --- ############
 
 
-highScore=4 # don't edit this, you cheater! >:(
+highScore=0 # don't edit this, you cheater! >:(
 length=3 # snake length
 direction=left # direction of motion
 deltat=0.1 # 1/speed
