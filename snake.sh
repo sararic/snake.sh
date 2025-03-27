@@ -2,15 +2,15 @@
 
 ############ --- checking the version of bash --- ############
 
-required_version="4.4"
-current_version="${BASH_VERSION%%[^0-9.]*}"
+req_major=4
+req_minor=4
 
-lowest_version=$(printf '%s\n'\
-        "$required_version"\
-        "$current_version"\
-    | sort -V | head -n1)
-if [[ $lowest_version != "$required_version" ]]; then
-    echo "This script requires Bash version >= $required_version. Current version: $current_version"
+IFS='.'
+read cur_major cur_minor <<< "${BASH_VERSION%%[^0-9.]*}"
+
+    if     [[ $cur_major -lt $req_major ]]\
+    || [[ $cur_major -eq $req_major && $cur_minor -lt $req_minor ]]; then
+    echo "This script requires Bash version >= $req_major.$req_minor"
     exit 1
 fi
 
@@ -36,7 +36,7 @@ RANDOM=$(( $(date +%s) % 32768 ))
 ############ --- program variables --- ############
 
 
-highScore=0 # don't edit this, you cheater! >:(
+highScore=2 # don't edit this, you cheater! >:(
 length=3 # snake length
 direction=left # direction of motion
 deltat=0.1 # 1/speed
