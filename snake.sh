@@ -23,7 +23,7 @@ RANDOM=$(( $(date +%s) % 32768 ))
 ############ --- program variables --- ############
 
 
-highScore=0 # don't edit this, you cheater! >:(
+highScore=4 # don't edit this, you cheater! >:(
 length=3 # snake length
 direction=left # direction of motion
 deltat=0.1 # 1/speed
@@ -36,7 +36,7 @@ prevHead=1
 curHead=2
 
 gameOverFlag=0
-growingFlag=0 # whether the snake is growing
+foodCache=0 # consumed food that hasn't been added to the snake yet
 
 # screen buffer:
 declare -a buffer
@@ -46,7 +46,7 @@ done
 # snake segments x positions
 declare -a snakeX=( $(( W/2 - 1 )) $(( W/2 )) $(( W/2 + 1 )) )
 # snake segments y positions
-declare -a snakeY=( $(( H/2 )) $(( H/2 )) $(( H/2 )) )
+declare -a snakeY=( $(( H/2 ))     $(( H/2 )) $(( H/2 ))     )
 foodX=0 # food x
 foodY=0 # food y
 
@@ -83,18 +83,18 @@ parse_input(){
     # \033[D : left arrow
     if [[ ! ${keystroke} =~ $'\033['[ABCD] ]]; then return; fi;
     case ${keystroke:2} in
-        A) if [ $direction != down ]; then direction=up; fi;;
-        B) if [ $direction != up ]; then direction=down; fi;;
-        C) if [ $direction != left ]; then direction=right; fi;;
-        D) if [ $direction != right ]; then direction=left; fi;;
+        A) if [ $direction != down  ]; then direction=up;    fi;;
+        B) if [ $direction != up    ]; then direction=down;  fi;;
+        C) if [ $direction != left  ]; then direction=right; fi;;
+        D) if [ $direction != right ]; then direction=left;  fi;;
         *);;
     esac
 }
 
 move_snake(){
     # with each move, the frame index increments, and
-    # the tail of the snake becomes the new head. In pseudo-code:
-    # segments[current tail] = segments[current head] + increment.
+    # we replace the new head. In pseudo-code:
+    # segments[current head] = segments[previous head] + increment.
     case $direction in
         up)
             snakeY[curHead]=$(( snakeY[prevHead] - 1 ));
@@ -113,10 +113,10 @@ move_snake(){
 }
 
 check_collision(){
-    if [ ${snakeX[curHead]} -lt 0 ]\
-        || [ ${snakeY[curHead]} -lt 0 ]\
-        || [ ${snakeX[curHead]} -ge $W ]\
-        || [ ${snakeY[curHead]} -ge $H ]\
+    if     [  ${snakeX[curHead]} -lt 0  ]\
+        || [  ${snakeY[curHead]} -lt 0  ]\
+        || [  ${snakeX[curHead]} -ge $W ]\
+        || [  ${snakeY[curHead]} -ge $H ]\
         || [[ ${buffer[snakeY[curHead]*W + snakeX[curHead]]} -eq 1 ]]
     then
         gameOverFlag=1
@@ -125,18 +125,18 @@ check_collision(){
 
 frame(){
     # to be executed every frame
-    if [ ${snakeX[curHead]} -eq $foodX ]\
+    if     [ ${snakeX[curHead]} -eq $foodX ]\
         && [ ${snakeY[curHead]} -eq $foodY ]
     then
-        ((growingFlag++))
+        ((foodCache++))
         place_food
     fi
 
-    if [ $growingFlag -ne 0 ] && [ $curTail -eq 0 ]; then
-    # we only increment the length of the snake when the frame index hits
+    if [ $foodCache -ne 0 ] && [ $curTail -eq 0 ]; then
+    # we only increment the length of the snake when the tail index hits
     # 0 to avoid issues with addressing array entries that don't exist.
         ((length++))
-        ((growingFlag--))
+        ((foodCache--))
     else
         # erase the old tail
         output ${snakeX[curTail]} ${snakeY[curTail]} ' '
@@ -148,7 +148,7 @@ frame(){
 
     # define the new positions for head and previous head
     prevHead=$(( (curTail + length - 2) % length ))
-    curHead=$(( (prevHead + 1) % length ))
+    curHead=$((  (prevHead + 1)         % length ))
 
     parse_input
     move_snake
@@ -156,7 +156,7 @@ frame(){
 
     # print the new head    
     output ${snakeX[prevHead]} ${snakeY[prevHead]} o
-    output ${snakeX[curHead]} ${snakeY[curHead]} @
+    output ${snakeX[curHead]}  ${snakeY[curHead]}  @
     buffer[snakeY[curHead]*W + snakeX[curHead]]=1
 }
 
@@ -173,7 +173,7 @@ do
             sed -i -e "s/^highScore=[0-9]\+/highScore=$highScore/" "$0"
         fi
         output $((W/2 - 6)) $((H/2-1)) " GAME OVER!! "
-        output $((W/2 - 6)) $((H/2)) " Score: $(( length - 3 )) "
+        output $((W/2 - 6)) $((H/2))   " Score: $(( length - 3 )) "
         output $((W/2 - 6)) $((H/2+1)) " High-score: $highScore "
         read -n1 _
         exit
