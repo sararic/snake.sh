@@ -1,5 +1,18 @@
 #!/bin/bash
 
+############ --- checking the version of bash --- ############
+
+required_version="4.4"
+current_version="${BASH_VERSION%%[^0-9.]*}"
+
+lowest_version=$(printf '%s\n'\
+        "$required_version"\
+        "$current_version"\
+    | sort -V | head -n1)
+if [[ $lowest_version != "$required_version" ]]; then
+    echo "This script requires Bash version >= $required_version. Current version: $current_version"
+    exit 1
+fi
 
 ############ --- initializing the terminal --- ############
 

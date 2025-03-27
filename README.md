@@ -4,7 +4,7 @@ Snake game written entirely in bash script.
 
 ## Dependencies
 
-A system with the `bash` shell.
+- `bash`: version >= 4.4
 
 ## Installation
 
