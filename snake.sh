@@ -1,18 +1,36 @@
 #!/bin/bash
 
-############ --- checking the version of bash --- ############
+############ --- checking dependencies --- ############
 
-req_major=4
-req_minor=4
 
-IFS='.'
-read cur_major cur_minor <<< "${BASH_VERSION%%[^0-9.]*}"
-
-    if     [[ $cur_major -lt $req_major ]]\
-    || [[ $cur_major -eq $req_major && $cur_minor -lt $req_minor ]]; then
-    echo "This script requires Bash version >= $req_major.$req_minor"
+# check if running in a terminal, with both stdin and stdout
+if [ ! -t 0 ] || [ ! -t 1 ]; then
+    echo "This script must be run in a terminal" >&2
     exit 1
 fi
+
+# bash version >= 4.4
+req_major=4
+req_minor=4
+IFS='.'
+read cur_major cur_minor <<< "${BASH_VERSION%%[^0-9.]*}"
+if     [[ $cur_major -lt $req_major ]]\
+    || [[ $cur_major -eq $req_major && $cur_minor -lt $req_minor ]]; then
+    echo "This script requires Bash version >= $req_major.$req_minor" >&2
+    exit 1
+fi
+
+# check if a command is available
+check_dependency(){
+    if ! type "$1" >/dev/null 2>&1; then
+        echo "This script requires $1" >&2
+        exit 1
+    fi
+}
+
+check_dependency stty
+check_dependency sed
+
 
 ############ --- initializing the terminal --- ############
 
@@ -23,9 +41,16 @@ stty -echo
 # at the end, flush, go to 0, show cursor and input
 trap "printf '\033[0;0H\033[J\0338\033[?25h'; stty echo; exit"\
         EXIT HUP INT TERM
+
 # get terminal dimensions: W, H
 printf "\033[999;999H\033[6n"
-read -d R s
+read -d R -t 1 s
+# if s is empty, ANSI escape codes are not supported
+if [ -z "$s" ]; then
+    echo "This terminal does not support ANSI escape codes" >&2
+    exit 1
+fi
+# parse the dimensions
 IFS=';'
 read -r H W <<< "${s:2}"
 
