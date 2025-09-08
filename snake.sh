@@ -160,7 +160,7 @@ parse_input(){
 }
 
 move_snake(){
-    # with each move, the frame index increments, and
+    # with each move, the head indices increments, and
     # we replace the new head. In pseudo-code:
     # segments[current head] = segments[previous head] + increment.
     case $direction in
@@ -215,7 +215,7 @@ frame(){
         ((curTail %= length))
     fi
 
-    # define the new positions for head and previous head
+    # define the new indices for head and previous head
     prevHead=$(( (curTail + length - 2) % length ))
     curHead=$((  (prevHead + 1)         % length ))
 
