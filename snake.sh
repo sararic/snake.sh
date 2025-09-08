@@ -129,15 +129,14 @@ place_food(){
     # select a random cell that is not occupied by the snake or the frame
     r=$(( RANDOM % ((W-2)*(H-6) - length) ))
     q=$(( W*3 + 1 )) # start searching after the top and left edges
-    p=0
-    while [ $p -lt $r ]; do
-        if     [[ ${buffer[q]} -ne 1 ]]\
-            || [[ $((q % W)) -ne 0 ]]\
-            || [[ $((q % W)) -ne $((W-1)) ]]
-        then
-            ((p++))
-        fi
+    for (( p=0; p < r; p++ )); do
         ((q++))
+        while  [[ ${buffer[q]} -eq 1 ]]\
+            || [[ $((q % W)) -eq 0 ]]\
+            || [[ $((q % W)) -eq $((W-1)) ]]
+        do
+            ((q++))
+        done
     done
     foodX=$((q % W))
     foodY=$((q / W))
