@@ -91,7 +91,7 @@ foodY=0 # food y
 keystroke= # pressed key. 
 
 
-############ --- defining functions --- ############
+############ -- draw edge of the screen --- ############
 
 
 output(){
@@ -99,13 +99,36 @@ output(){
     printf "\033[%d;%dH%s" "$(($2+1))" "$(($1+1))" "$3" 2>/dev/null
 }
 
+output $((W/2 -27)) 0 "USE ARROW KEYS TO MOVE. USE SPACE TO PAUSE AND RESUME."
+
+for ((i=0; i<W; i++)); do
+    output $i 2   '█'
+    output $i $((H-3)) '█'
+done
+for ((i=2; i<H-2; i++)); do
+    output 0   $i '█'
+    output $((W-1)) $i '█'
+done
+
+output $((W -20)) $((H-1)) "HIGH-SCORE: $highScore"
+output 2 $((H-1)) "SCORE: $(( length - 3 ))"
+
+
+############ --- define game functions --- ############
+
+
 place_food(){
-    # select a random cell that is not occupied by the snake
-    r=$(( RANDOM % (W*H - length) ))
-    q=0
+    # select a random cell that is not occupied by the snake or the frame
+    r=$(( RANDOM % ((W-2)*(H-6) - length) ))
+    q=$(( W*3 + 1 )) # start searching after the top and left edges
     p=0
-    while [ $p -lt $r ] || [[ ${buffer[q]} -eq 1 ]]; do
-        ((p += 1 - buffer[q]))
+    while [ $p -lt $r ]; do
+        if     [[ ${buffer[q]} -ne 1 ]]\
+            || [[ $((q % W)) -ne 0 ]]\
+            || [[ $((q % W)) -ne $((W-1)) ]]
+        then
+            ((p += 1))
+        fi
         ((q++))
     done
     foodX=$((q % W))
@@ -151,10 +174,10 @@ move_snake(){
 }
 
 check_collision(){
-    if     [  ${snakeX[curHead]} -lt 0  ]\
-        || [  ${snakeY[curHead]} -lt 0  ]\
-        || [  ${snakeX[curHead]} -ge $W ]\
-        || [  ${snakeY[curHead]} -ge $H ]\
+    if     [  ${snakeX[curHead]} -lt 1  ]\
+        || [  ${snakeY[curHead]} -lt 3  ]\
+        || [  ${snakeX[curHead]} -ge $((W-1)) ]\
+        || [  ${snakeY[curHead]} -ge $((H-3)) ]\
         || [[ ${buffer[snakeY[curHead]*W + snakeX[curHead]]} -eq 1 ]]
     then
         gameOverFlag=1
