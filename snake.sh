@@ -117,6 +117,14 @@ output 2 $((H-1)) "SCORE: $(( length - 3 ))"
 ############ --- define game functions --- ############
 
 
+update_score(){
+    output 2 $((H-1)) "SCORE: $(( length + foodCache - 3 ))"
+    if [ $(( length + foodCache - 3 )) -gt $highScore ]; then
+        output $((W -20)) $((H-1)) "HIGH-SCORE: $(( length + foodCache - 3 ))"
+    fi
+}
+
+
 place_food(){
     # select a random cell that is not occupied by the snake or the frame
     r=$(( RANDOM % ((W-2)*(H-6) - length) ))
@@ -191,6 +199,7 @@ frame(){
     then
         ((foodCache++))
         place_food
+        update_score
     fi
 
     if [ $foodCache -ne 0 ] && [ $curTail -eq 0 ]; then
@@ -229,13 +238,13 @@ place_food
 while true
 do
     if [ $gameOverFlag -ne 0 ]; then
-        if [ $(( length - 3 )) -gt $highScore ]; then
-            highScore=$(( length - 3 ))
+        if [ $(( length + foodCache - 3 )) -gt $highScore ]; then
+            output $((W/2 - 9)) $((H/2)) " NEW HIGH-SCORE!! "
+            highScore=$(( length + foodCache - 3 ))
             sed -i -e "s/^highScore=[0-9]\+/highScore=$highScore/" "$0"
+        else
+            output $((W/2 - 6)) $((H/2)) " GAME OVER!! "
         fi
-        output $((W/2 - 6)) $((H/2-1)) " GAME OVER!! "
-        output $((W/2 - 6)) $((H/2))   " Score: $(( length - 3 )) "
-        output $((W/2 - 6)) $((H/2+1)) " High-score: $highScore "
         read -n1 _
         exit
     else
