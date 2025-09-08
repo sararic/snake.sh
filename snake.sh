@@ -99,7 +99,8 @@ output(){
     printf "\033[%d;%dH%s" "$(($2+1))" "$(($1+1))" "$3" 2>/dev/null
 }
 
-output $((W/2 -27)) 0 "USE ARROW KEYS TO MOVE. USE SPACE TO PAUSE AND RESUME."
+output $((W/2 -27)) 0\
+    "USE ARROW KEYS TO MOVE. USE SPACE TO PAUSE AND RESUME."
 
 for ((i=0; i<W; i++)); do
     output $i 2   '█'
@@ -120,7 +121,8 @@ output 2 $((H-1)) "SCORE: $(( length - 3 ))"
 update_score(){
     output 2 $((H-1)) "SCORE: $(( length + foodCache - 3 ))"
     if [ $(( length + foodCache - 3 )) -gt $highScore ]; then
-        output $((W -20)) $((H-1)) "HIGH-SCORE: $(( length + foodCache - 3 ))"
+        output $((W -20)) $((H-1))\
+            "HIGH-SCORE: $(( length + foodCache - 3 ))"
     fi
 }
 
