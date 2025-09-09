@@ -239,6 +239,7 @@ place_food
 while true
 do
     if [ $gameOverFlag -ne 0 ]; then
+        output ${snakeX[curHead]} ${snakeY[curHead]} 'X'
         if [ $(( length + foodCache - 3 )) -gt $highScore ]; then
             output $((W/2 - 9)) $((H/2)) " NEW HIGH-SCORE!! "
             highScore=$(( length + foodCache - 3 ))
@@ -249,8 +250,8 @@ do
         read -n1 _
         exit
     else
-        frame
         read -t $deltat -N3 keystroke
+        frame
         # implement a pause button (space bar)
         if [ "$keystroke" = ' ' ]; then read -n1 _; fi
     fi
