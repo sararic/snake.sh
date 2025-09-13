@@ -20,7 +20,7 @@ chmod +x snake.sh
 
 ## Game Controls
 
-Use the arrow keys to move around.
-Use the space bar to pause the game, and press any key to resume.
-On game-over screen, press any key to quit.
-Quit at any time by pressing Ctrl+C.
+- Use the arrow keys to move around.
+- Use the space bar to pause the game, and press any key to resume.
+- On game-over screen, press any key to quit.
+- Quit at any time by pressing Ctrl+C.
