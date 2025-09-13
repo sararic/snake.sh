@@ -20,7 +20,7 @@ chmod +x snake.sh
 Use the arrow keys to move around.
 Use the space bar to pause the game, and press any key to resume.
 On game-over screen, press any key to quit.
-Quit at any time by pressing Ctrl+C. Your high-score will not be recorded.
+Quit at any time by pressing Ctrl+C.
 
 ## Todo List
 
